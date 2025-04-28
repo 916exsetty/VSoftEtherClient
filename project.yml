@@ -1,28 +1,31 @@
-name: SoftEtherClient
+name: VPNProject
 options:
   bundleIdPrefix: com.leadconcept
-configs:
-  Debug: debug
-  Release: release
-settings:
-  base:
-    SWIFT_VERSION: "5.0"
-    IPHONEOS_DEPLOYMENT_TARGET: "13.0"
 targets:
-  SoftEtherClient:
+  VPNApp:
     type: application
     platform: iOS
-    deploymentTarget: "13.0"
+    deploymentTarget: "16.0"
     sources: [Sources/App]
-    settings:
-      PRODUCT_BUNDLE_IDENTIFIER: com.leadconcept.SoftEtherClient
+    entitlements:
+      'com.apple.security.network.client': true
+      'com.apple.security.network.server': true
+      'com.apple.security.application-groups': ['group.com.leadconcept.vpn']
+    dependencies:
+      - framework: Frameworks/SoftEtherClient.xcframework
+      - target: VPNTunnel
 
-  PacketTunnel:
+  VPNTunnel:
     type: app-extension
     platform: iOS
-    deploymentTarget: "13.0"
-    sources: [Sources/PacketTunnel]
+    deploymentTarget: "16.0"
+    sources: [Sources/Tunnel]
+    entitlements:
+      'com.apple.security.network.client': true
+      'com.apple.security.network.server': true
+      'com.apple.security.application-groups': ['group.com.leadconcept.vpn']
+      'com.apple.developer.networking.vpn.api': [allow-vpn]
     info:
-      path: Sources/PacketTunnel/Info.plist
-    settings:
-      PRODUCT_BUNDLE_IDENTIFIER: com.leadconcept.SoftEtherClient.PacketTunnel
+      NSExtension:
+        NSExtensionPointIdentifier: com.apple.networkextension.packet-tunnel
+        NSExtensionPrincipalClass: PacketTunnelProvider
