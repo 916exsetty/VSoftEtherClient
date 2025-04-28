@@ -1,88 +1,95 @@
-import NetworkExtension
-import Foundation
+import networkextension
 
-class PacketTunnelProvider: NEPacketTunnelProvider {
-    
-    let username = "indteam2"
-    let password = "whatever_password_they_gave"
-
-    override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            self.updateStatus("initializing client")
+class packettunnelprovider: nepac​kettunnelprovider {
+    override func starttunnel(options: [string : nsobject]?,
+                              completionhandler: @escaping (error?) -> void) {
+        dispatchqueue.global(qos: .background).async {
+            self.updatestatus("initializing client")
             guard se_initialize_client() == 0 else {
-                return completionHandler(NSError(domain: "softether", code: 1, userInfo: [NSLocalizedDescriptionKey: "init failed"]))
+                return completionhandler(nserror(domain: "softether", code: 1,
+                        userinfokey: [nslocalizeddescriptionkey: "init failed"]))
             }
 
-            self.updateStatus("connecting to cluster")
-            "worxvpn.662.cloud".withCString { host in
+            self.updatestatus("connecting to cluster")
+            "worxvpn.662.cloud".withcstring { host in
                 if se_connect_to_server(host, 443) != 0 {
-                    return completionHandler(NSError(domain: "softether", code: 2, userInfo: [NSLocalizedDescriptionKey: "cluster connect failed"]))
+                    return completionhandler(nserror(domain: "softether", code: 2,
+                        userinfokey: [nslocalizeddescriptionkey: "cluster connect failed"]))
                 }
             }
 
-            self.updateStatus("sending hello")
+            self.updatestatus("sending hello")
             guard se_send_hello() == 0 else {
-                return completionHandler(NSError(domain: "softether", code: 3, userInfo: [NSLocalizedDescriptionKey: "hello send failed"]))
+                return completionhandler(nserror(domain: "softether", code: 3,
+                        userinfokey: [nslocalizeddescriptionkey: "hello send failed"]))
             }
 
-            self.updateStatus("receiving hello")
+            self.updatestatus("receiving hello")
             guard se_receive_hello() == 0 else {
-                return completionHandler(NSError(domain: "softether", code: 4, userInfo: [NSLocalizedDescriptionKey: "hello receive failed"]))
+                return completionhandler(nserror(domain: "softether", code: 4,
+                        userinfokey: [nslocalizeddescriptionkey: "hello receive failed"]))
             }
 
-            self.updateStatus("authenticating user")
-            self.username.withCString { u in
-                self.password.withCString { p in
+            self.updatestatus("authenticating user")
+            "indteam2".withcstring { u in
+                "{$password}".withcstring { p in
                     if se_authenticate_client(u, p) != 0 {
-                        return completionHandler(NSError(domain: "softether", code: 5, userInfo: [NSLocalizedDescriptionKey: "auth failed"]))
+                        return completionhandler(nserror(domain: "softether", code: 5,
+                            userinfokey: [nslocalizeddescriptionkey: "auth failed"]))
                     }
                 }
             }
 
-            self.updateStatus("getting redirect server")
-            var hostbuf = [CChar](repeating: 0, count: 256)
-            var port: Int32 = 0
-            guard se_get_redirect_server(&hostbuf, Int32(hostbuf.count), &port) == 0 else {
-                return completionHandler(NSError(domain: "softether", code: 6, userInfo: [NSLocalizedDescriptionKey: "redirect failed"]))
+            self.updatestatus("getting redirect server")
+            var hostbuf = [cstringrepeating: 0](count: 256)
+            var port: int32 = 0
+            guard se_get_redirect_server(&hostbuf, int32(hostbuf.count), &port) == 0 else {
+                return completionhandler(nserror(domain: "softether", code: 6,
+                        userinfokey: [nslocalizeddescriptionkey: "redirect failed"]))
             }
-            let redirect = String(cString: hostbuf)
+            let redirect = string(cstring: hostbuf)
 
-            self.updateStatus("connecting to gateway \(redirect):\(port)")
-            redirect.withCString { h in
+            self.updatestatus("connecting to gateway \(redirect):\(port)")
+            redirect.withcstring { h in
                 if se_connect_to_server(h, Int(port)) != 0 {
-                    return completionHandler(NSError(domain: "softether", code: 7, userInfo: [NSLocalizedDescriptionKey: "gateway connect failed"]))
+                    return completionhandler(nserror(domain: "softether", code: 7,
+                        userinfokey: [nslocalizeddescriptionkey: "gateway connect failed"]))
                 }
             }
 
             for i in 0..<2 {
-                self.updateStatus("establishing tunnel \(i+1)")
+                self.updatestatus("establishing tunnel \(i+1)")
                 guard se_establish_tunnel(i) == 0 else {
-                    return completionHandler(NSError(domain: "softether", code: 8, userInfo: [NSLocalizedDescriptionKey: "tunnel \(i+1) failed"]))
+                    return completionhandler(nserror(domain: "softether", code: 8,
+                            userinfokey: [nslocalizeddescriptionkey: "tunnel \(i+1) failed"]))
                 }
             }
 
-            self.updateStatus("sending dhcp discover")
+            self.updatestatus("sending dhcp discover")
             guard se_dhcp_discover() == 0 else {
-                return completionHandler(NSError(domain: "softether", code: 9, userInfo: [NSLocalizedDescriptionKey: "dhcp discover failed"]))
+                return completionhandler(nserror(domain: "softether", code: 9,
+                        userinfokey: [nslocalizeddescriptionkey: "dhcp discover failed"]))
             }
 
-            self.updateStatus("receiving dhcp offer")
+            self.updatestatus("receiving dhcp offer")
             guard se_dhcp_receive_offer() == 0 else {
-                return completionHandler(NSError(domain: "softether", code: 10, userInfo: [NSLocalizedDescriptionKey: "dhcp offer failed"]))
+                return completionhandler(nserror(domain: "softether", code: 10,
+                        userinfokey: [nslocalizeddescriptionkey: "dhcp offer failed"]))
             }
 
-            self.updateStatus("tunnel up and running")
-            completionHandler(nil)
+            self.updatestatus("tunnel up and running")
+            completionhandler(nil)
         }
     }
 
-    override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
-        // TODO: call C api to disconnect tunnels
-        completionHandler()
+    override func stoptunnel(with reason: neproviderstopreason,
+                              completionhandler: @escaping () -> void) {
+        // TODO: call c api to disconnect tunnels
+        completionhandler()
     }
 
-    func updateStatus(_ text: String) {
-        let data = try? JSONSerialization.data(withJSONObject: ["status": text], options: [])
-        sendProviderMessage(data) { _ in }
+    func updatestatus(_ text: string) {
+        let data = try? jsonserialization.data(withjsonobject: ["status": text], options: [])
+        sendprovidermessage(data) { _ in }
     }
 }
