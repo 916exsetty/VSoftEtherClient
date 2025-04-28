@@ -2,7 +2,8 @@ name: iOS CI Build
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -11,31 +12,32 @@ jobs:
       DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
 
     steps:
-    - uses: actions/checkout@v3
+      - name: checkout code
+        uses: actions/checkout@v3
 
-    - name: install xcodegen
-      run: |
-        brew tap yonaskolb/XcodeGen
-        brew install xcodegen
+      - name: install xcodegen
+        run: |
+          brew tap yonaskolb/XcodeGen
+          brew install xcodegen
 
-    - name: generate xcode project
-      run: xcodegen generate
+      - name: generate xcode project
+        run: xcodegen generate
 
-    - name: build app & extension
-      run: |
-        xcodebuild \
-          -project SoftEtherClient.xcodeproj \
-          -scheme SoftEtherClient \
-          -configuration Debug \
-          -sdk iphoneos \
-          CODE_SIGN_STYLE=Automatic \
-          DEVELOPMENT_TEAM=${DEVELOPMENT_TEAM} \
-          clean build
+      - name: build app & extension
+        run: |
+          xcodebuild \
+            -project SoftEtherClient.xcodeproj \
+            -scheme SoftEtherClient \
+            -configuration Debug \
+            -sdk iphoneos \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=${{ env.DEVELOPMENT_TEAM }} \
+            clean build
 
-    - name: upload build artifact
-    uses: actions/upload-artifact@v4
-    with:
-      name: SoftEtherClient-Debug
-      path: |
-        $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphoneos/SoftEtherClient.app
-        $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphoneos/PacketTunnel.appex
+      - name: upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoftEtherClient-Debug
+          path: |
+            $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphoneos/SoftEtherClient.app
+            $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphoneos/PacketTunnel.appex
