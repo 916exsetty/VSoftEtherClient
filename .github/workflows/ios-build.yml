@@ -28,8 +28,9 @@ jobs:
             -scheme SoftEtherClient \
             -configuration Debug \
             -sdk iphoneos \
-            CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM=${{ env.DEVELOPMENT_TEAM }} \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
             clean build
 
       - name: upload build artifact

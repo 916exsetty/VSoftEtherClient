@@ -1,6 +1,6 @@
 name: SoftEtherClient
 options:
-  bundleIdPrefix: com.yourcompany
+  bundleIdPrefix: com.leadconcept
 configs:
   Debug: debug
   Release: release
@@ -15,7 +15,7 @@ targets:
     deploymentTarget: "13.0"
     sources: [Sources/App]
     settings:
-      PRODUCT_BUNDLE_IDENTIFIER: com.yourcompany.SoftEtherClient
+      PRODUCT_BUNDLE_IDENTIFIER: com.leadconcept.SoftEtherClient
 
   PacketTunnel:
     type: app-extension
@@ -25,4 +25,4 @@ targets:
     info:
       path: Sources/PacketTunnel/Info.plist
     settings:
-      PRODUCT_BUNDLE_IDENTIFIER: com.yourcompany.SoftEtherClient.PacketTunnel
+      PRODUCT_BUNDLE_IDENTIFIER: com.leadconcept.SoftEtherClient.PacketTunnel
