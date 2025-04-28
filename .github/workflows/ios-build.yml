@@ -33,9 +33,9 @@ jobs:
           clean build
 
     - name: upload build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: SoftEtherClient-Debug
-        path: |
-          ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphoneos/SoftEtherClient.app
-          ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphoneos/PacketTunnel.appex
+    uses: actions/upload-artifact@v4
+    with:
+      name: SoftEtherClient-Debug
+      path: |
+        $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphoneos/SoftEtherClient.app
+        $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/Debug-iphoneos/PacketTunnel.appex
