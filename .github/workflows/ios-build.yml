@@ -1,0 +1,41 @@
+name: iOS CI Build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    env:
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: install xcodegen
+      run: |
+        brew tap yonaskolb/XcodeGen
+        brew install xcodegen
+
+    - name: generate xcode project
+      run: xcodegen generate
+
+    - name: build app & extension
+      run: |
+        xcodebuild \
+          -project SoftEtherClient.xcodeproj \
+          -scheme SoftEtherClient \
+          -configuration Debug \
+          -sdk iphoneos \
+          CODE_SIGN_STYLE=Automatic \
+          DEVELOPMENT_TEAM=${DEVELOPMENT_TEAM} \
+          clean build
+
+    - name: upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: SoftEtherClient-Debug
+        path: |
+          ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphoneos/SoftEtherClient.app
+          ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphoneos/PacketTunnel.appex

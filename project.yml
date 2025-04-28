@@ -1,0 +1,26 @@
+name: SoftEtherClient
+options:
+  bundleIdPrefix: com.leadconcept
+configs:
+  Debug: debug
+  Release: release
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "13.0"
+targets:
+  SoftEtherClient:
+    type: application
+    platform: iOS
+    deploymentTarget: "13.0"
+    sources: [Sources/App]
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.leadconcept.SoftEtherClient
+  PacketTunnel:
+    type: network-extension
+    platform: iOS
+    deploymentTarget: "13.0"
+    extension: NetworkExtension
+    sources: [Sources/PacketTunnel]
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.leadconcept.SoftEtherClient.PacketTunnel
